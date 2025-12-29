@@ -1,0 +1,5 @@
+{
+  "name": "MailFlow AI",
+  "description": "A comprehensive email marketing dashboard featuring AI-powered campaign generation, subscriber management, and real-time analytics visualization. Note: This is the React frontend interface designed to connect with a PHP/MySQL backend.",
+  "requestFramePermissions": []
+}
