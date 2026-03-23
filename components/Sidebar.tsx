@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Mail, Users, BarChart2, Settings, Send, Server, FileText, Globe, UserCheck, ShieldCheck, LogOut } from 'lucide-react';
+import { LayoutDashboard, Mail, Users, BarChart2, Settings, Send, Server, FileText, Globe, UserCheck, ShieldCheck, LogOut, Cpu, Zap, DollarSign, Share2 } from 'lucide-react';
 import { AuthUser } from '../types';
 
 interface SidebarProps {
@@ -16,12 +16,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, curre
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'customers', label: 'Customers', icon: UserCheck },
+        { id: 'integrations', label: 'Integrations', icon: Share2 },
       ]
     },
     {
       label: 'Campaigns',
       items: [
         { id: 'campaigns', label: 'All Campaigns', icon: Mail },
+        { id: 'automation', label: 'Automation', icon: Cpu },
+        { id: 'transactional', label: 'Transactional', icon: Zap },
         { id: 'templates', label: 'Email Templates', icon: FileText },
       ]
     },
@@ -29,6 +32,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, curre
       label: 'Lists & Subscribers',
       items: [
         { id: 'subscribers', label: 'Lists & Segments', icon: Users },
+      ]
+    },
+    {
+      label: 'Monetization',
+      items: [
+        { id: 'monetization', label: 'Monetization', icon: DollarSign },
       ]
     },
     {
@@ -48,15 +57,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, curre
   ];
 
   return (
-    <div className="w-64 bg-slate-900 text-white flex flex-col h-screen fixed left-0 top-0 z-10 shadow-xl overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700">
+    <div className="w-64 bg-slate-900 text-white flex flex-col h-screen fixed left-0 top-0 z-10 shadow-xl">
       <div className="p-6 flex items-center space-x-3 border-b border-slate-800 shrink-0">
-        <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
           <Send size={20} className="text-white" />
         </div>
-        <span className="text-xl font-bold tracking-tight">MailFlow AI</span>
+        <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">MailFlow AI</span>
       </div>
 
-      <nav className="flex-1 py-6 px-3 space-y-6">
+      <nav className="flex-1 py-6 px-3 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700">
         {menuGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
             <h3 className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
@@ -72,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, curre
                     onClick={() => onNavigate(item.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30'
                         : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                     }`}
                   >

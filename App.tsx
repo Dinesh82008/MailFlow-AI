@@ -9,6 +9,10 @@ import { Servers } from './pages/Servers';
 import { Customers } from './pages/Customers';
 import { Domains } from './pages/Domains';
 import { Settings } from './pages/Settings';
+import { Automation } from './pages/Automation';
+import { Transactional } from './pages/Transactional';
+import { Monetization } from './pages/Monetization';
+import { Integrations } from './pages/Integrations';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { AuthUser } from './types';
@@ -49,12 +53,16 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'dashboard': return <Dashboard />;
       case 'campaigns': return <Campaigns />;
+      case 'automation': return <Automation />;
+      case 'transactional': return <Transactional />;
       case 'subscribers': return <Subscribers />;
       case 'analytics': return <Analytics />;
       case 'templates': return <Templates />;
       case 'servers': return <Servers />;
       case 'customers': return <Customers />;
       case 'domains': return <Domains />;
+      case 'monetization': return <Monetization />;
+      case 'integrations': return <Integrations />;
       case 'settings': return <Settings />;
       default: return <Dashboard />;
     }

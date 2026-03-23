@@ -10,7 +10,7 @@ const MOCK_TEMPLATES: EmailTemplate[] = [
       name: 'Modern Newsletter', 
       category: 'Newsletter', 
       updatedAt: '2 days ago', 
-      thumbnail: 'https://via.placeholder.com/300x200/f1f5f9/94a3b8?text=Newsletter',
+      thumbnail: 'https://images.unsplash.com/photo-1557200134-90327ee9fafa?w=400&h=300&fit=crop',
       html: '<div style="text-align: center; padding: 20px 0;"><div style="font-size: 24px; font-weight: bold;">Weekly Digest</div><p>Here is your weekly update.</p></div>',
       blocks: [
         { id: '1', type: 'text', content: { text: '<div style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">Weekly Digest</div><p>Here is your weekly update regarding our platform.</p>', align: 'center' } },
@@ -23,16 +23,16 @@ const MOCK_TEMPLATES: EmailTemplate[] = [
       name: 'E-commerce Sale', 
       category: 'Promotional', 
       updatedAt: '1 week ago', 
-      thumbnail: 'https://via.placeholder.com/300x200/e0e7ff/6366f1?text=Sale+Promo',
+      thumbnail: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=300&fit=crop',
       html: '<div style="text-align: center;"><h1>Flash Sale!</h1><p>50% off everything.</p></div>',
       blocks: [
         { id: '1', type: 'text', content: { text: '<h1>Flash Sale!</h1><p>Get 50% off everything this weekend only.</p>', align: 'center' } },
-        { id: '2', type: 'image', content: { src: 'https://via.placeholder.com/600x300', alt: 'Sale Banner', width: '100%', align: 'center' } },
+        { id: '2', type: 'image', content: { src: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&h=300&fit=crop', alt: 'Sale Banner', width: '100%', align: 'center' } },
         { id: '3', type: 'button', content: { label: 'Shop Now', url: '#', backgroundColor: '#ef4444', color: '#ffffff', align: 'center' } }
       ]
     },
-    { id: '3', name: 'Welcome Email', category: 'Transactional', updatedAt: '1 month ago', thumbnail: 'https://via.placeholder.com/300x200/f0fdf4/22c55e?text=Welcome' },
-    { id: '4', name: 'Simple Text', category: 'Basic', updatedAt: '3 months ago', thumbnail: 'https://via.placeholder.com/300x200/f8fafc/64748b?text=Simple' },
+    { id: '3', name: 'Welcome Email', category: 'Transactional', updatedAt: '1 month ago', thumbnail: 'https://images.unsplash.com/photo-1512428559083-a40ce903395b?w=400&h=300&fit=crop' },
+    { id: '4', name: 'Simple Text', category: 'Basic', updatedAt: '3 months ago', thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop' },
 ];
 
 export const Templates: React.FC = () => {
@@ -89,7 +89,7 @@ export const Templates: React.FC = () => {
         name: templateMeta.name,
         category: templateMeta.category,
         updatedAt: 'Just now',
-        thumbnail: 'https://via.placeholder.com/300x200/f1f5f9/94a3b8?text=' + encodeURIComponent(templateMeta.name),
+        thumbnail: `https://images.unsplash.com/photo-1557200134-90327ee9fafa?w=400&h=300&fit=crop`,
         blocks: finalBlocks,
         html: finalHtml
       };
@@ -154,6 +154,7 @@ export const Templates: React.FC = () => {
                     <ul className="list-disc pl-4 space-y-1">
                         <li>Use the Visual Builder for easy drag-and-drop design.</li>
                         <li>Switch to HTML Code for fine-grained control.</li>
+                        <li><strong>Interactive Content:</strong> Enable AMP for Email to allow users to perform actions directly in the email body.</li>
                         <li>Changes are auto-synced between views.</li>
                     </ul>
                   </div>
@@ -217,7 +218,7 @@ export const Templates: React.FC = () => {
           {/* Create New Card */}
           <div 
             onClick={() => handleOpenEditor()}
-            className="border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center p-8 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all group min-h-[250px]"
+            className="border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center p-8 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all group h-[280px]"
           >
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 group-hover:bg-indigo-200 group-hover:text-indigo-600 mb-4 transition-colors">
                   <Plus size={24} />
@@ -227,9 +228,9 @@ export const Templates: React.FC = () => {
           </div>
 
           {templates.map((template) => (
-              <div key={template.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+              <div key={template.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow group flex flex-col h-[280px]">
                   <div className="h-40 bg-slate-100 relative overflow-hidden shrink-0">
-                      <img src={template.thumbnail} alt={template.name} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-300" />
+                      <img src={template.thumbnail} alt={template.name} referrerPolicy="no-referrer" className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-300" />
                       {/* Hover Actions */}
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2">
                           <button 

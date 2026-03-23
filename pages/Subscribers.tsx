@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Upload, Download, UserPlus, Filter, MoreHorizontal, CheckCircle, XCircle, List, Users, ShieldAlert, PieChart } from 'lucide-react';
+import { Search, Upload, Download, UserPlus, Filter, MoreHorizontal, CheckCircle, XCircle, List, Users, ShieldAlert, PieChart, MousePointer, Eye, ShoppingCart, Zap, Plus } from 'lucide-react';
 import { Subscriber, SubscriberList } from '../types';
 
 const MOCK_LISTS: SubscriberList[] = [
@@ -16,8 +16,15 @@ const MOCK_SUBSCRIBERS: Subscriber[] = [
   { id: '5', email: 'emma@studio.io', firstName: 'Emma', lastName: 'Wilson', status: 'Subscribed', tags: ['VIP', 'EU'], joinedAt: '2023-11-01', listId: '2' },
 ];
 
+const BEHAVIORAL_SEGMENTS = [
+  { id: 1, name: 'High Intent Browsers', description: 'Users who viewed > 3 products in 24h', count: 1245, icon: Eye, color: 'blue' },
+  { id: 2, name: 'Cart Abandoners (High Value)', description: 'Cart > $200 abandoned in last 4h', count: 342, icon: ShoppingCart, color: 'orange' },
+  { id: 3, name: 'Frequent Clickers', description: 'Clicked > 5 links in last 3 campaigns', count: 2105, icon: MousePointer, color: 'purple' },
+  { id: 4, name: 'Churn Risk', description: 'No activity in last 60 days', count: 890, icon: ShieldAlert, color: 'red' },
+];
+
 export const Subscribers: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'lists' | 'subscribers' | 'segments' | 'blacklist'>('lists');
+  const [activeTab, setActiveTab] = useState<'lists' | 'subscribers' | 'segments' | 'behavioral' | 'blacklist'>('lists');
   const [filter, setFilter] = useState('');
 
   const filteredSubscribers = MOCK_SUBSCRIBERS.filter(sub => 
@@ -29,13 +36,18 @@ export const Subscribers: React.FC = () => {
     <div className="p-8 max-w-7xl mx-auto">
        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Lists & Subscribers</h1>
-          <p className="text-slate-500">Manage your audience, segments, and suppression lists.</p>
+          <h1 className="text-2xl font-bold text-slate-800">Audience Management</h1>
+          <p className="text-slate-500">Manage your subscribers and advanced behavioral segments.</p>
         </div>
         <div className="flex space-x-3">
              {activeTab === 'lists' && (
                  <button className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-lg shadow-indigo-600/20">
                     <List size={18} className="mr-2" /> Create New List
+                </button>
+             )}
+             {activeTab === 'behavioral' && (
+                 <button className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-lg shadow-indigo-600/20">
+                    <Zap size={18} className="mr-2" /> New Behavioral Rule
                 </button>
              )}
             {activeTab === 'subscribers' && (
@@ -52,28 +64,34 @@ export const Subscribers: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg w-fit mb-8">
+      <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg w-fit mb-8 overflow-x-auto">
           <button 
             onClick={() => setActiveTab('lists')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center ${activeTab === 'lists' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center whitespace-nowrap ${activeTab === 'lists' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
               <List size={16} className="mr-2" /> Lists
           </button>
           <button 
              onClick={() => setActiveTab('subscribers')}
-             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center ${activeTab === 'subscribers' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center whitespace-nowrap ${activeTab === 'subscribers' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
               <Users size={16} className="mr-2" /> All Subscribers
           </button>
            <button 
              onClick={() => setActiveTab('segments')}
-             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center ${activeTab === 'segments' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center whitespace-nowrap ${activeTab === 'segments' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
-              <PieChart size={16} className="mr-2" /> Segments
+              <PieChart size={16} className="mr-2" /> Static Segments
+          </button>
+          <button 
+             onClick={() => setActiveTab('behavioral')}
+             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center whitespace-nowrap ${activeTab === 'behavioral' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+              <Zap size={16} className="mr-2" /> Behavioral Segments
           </button>
            <button 
              onClick={() => setActiveTab('blacklist')}
-             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center ${activeTab === 'blacklist' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+             className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center whitespace-nowrap ${activeTab === 'blacklist' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
               <ShieldAlert size={16} className="mr-2" /> Global Blacklist
           </button>
@@ -112,6 +130,42 @@ export const Subscribers: React.FC = () => {
                       </div>
                   </div>
               ))}
+          </div>
+      )}
+
+      {activeTab === 'behavioral' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {BEHAVIORAL_SEGMENTS.map(segment => {
+                  const Icon = segment.icon;
+                  return (
+                      <div key={segment.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex items-start space-x-4">
+                          <div className={`w-12 h-12 bg-${segment.color}-50 text-${segment.color}-600 rounded-lg flex items-center justify-center shrink-0`}>
+                              <Icon size={24} />
+                          </div>
+                          <div className="flex-1">
+                              <div className="flex justify-between items-start">
+                                  <h3 className="text-lg font-bold text-slate-800">{segment.name}</h3>
+                                  <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded uppercase tracking-wider">Real-time</span>
+                              </div>
+                              <p className="text-sm text-slate-500 mt-1">{segment.description}</p>
+                              <div className="mt-4 flex items-center justify-between">
+                                  <div className="flex items-center text-sm font-medium text-slate-700">
+                                      <Users size={14} className="mr-1.5 text-slate-400" />
+                                      {segment.count.toLocaleString()} subscribers
+                                  </div>
+                                  <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Edit Rules</button>
+                              </div>
+                          </div>
+                      </div>
+                  );
+              })}
+              <div className="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 group-hover:text-indigo-600 shadow-sm mb-3">
+                      <Plus size={20} />
+                  </div>
+                  <h3 className="font-bold text-slate-700">Create Behavioral Segment</h3>
+                  <p className="text-xs text-slate-500 mt-1">Group subscribers based on real-time actions and interactions.</p>
+              </div>
           </div>
       )}
 

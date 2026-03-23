@@ -145,6 +145,18 @@ export const Campaigns: React.FC = () => {
                     <option>VIP Customers</option>
                   </select>
                 </div>
+                <div className="pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Predictive Sending</label>
+                    <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded uppercase tracking-tighter">AI Powered</span>
+                  </div>
+                  <div className="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <input type="checkbox" id="predictive" className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" />
+                    <label htmlFor="predictive" className="ml-2 text-xs text-slate-600 font-medium leading-tight">
+                      Optimize delivery time for each individual subscriber.
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
