@@ -13,11 +13,15 @@ import { Automation } from './pages/Automation';
 import { Transactional } from './pages/Transactional';
 import { Monetization } from './pages/Monetization';
 import { Integrations } from './pages/Integrations';
+import { Landing } from './pages/Landing';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { AuthUser } from './types';
 
 const App: React.FC = () => {
+  // Landing State
+  const [showLanding, setShowLanding] = useState(true);
+
   // Auth State
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authPage, setAuthPage] = useState<'login' | 'register'>('login');
@@ -38,7 +42,13 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setUser(null);
     setAuthPage('login');
+    setShowLanding(true);
   };
+
+  // If showing landing page
+  if (showLanding && !user) {
+    return <Landing onEnterApp={() => setShowLanding(false)} />;
+  }
 
   // If not authenticated, show Auth Pages
   if (!user) {

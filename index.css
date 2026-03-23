@@ -10,6 +10,10 @@
   .animate-slide-up {
     animation: slideUp 0.5s ease-out forwards;
   }
+
+  .animate-bounce-slow {
+    animation: bounceSlow 3s ease-in-out infinite;
+  }
 }
 
 @keyframes fadeIn {
@@ -20,6 +24,11 @@
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* Custom Scrollbar */

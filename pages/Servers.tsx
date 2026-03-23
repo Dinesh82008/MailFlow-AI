@@ -1,14 +1,75 @@
-import React from 'react';
-import { Server, Plus, CheckCircle, XCircle, Settings, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { Server, Plus, CheckCircle, XCircle, Settings, Shield, X, Save, Trash2 } from 'lucide-react';
 import { DeliveryServer } from '../types';
 
-const MOCK_SERVERS: DeliveryServer[] = [
+const INITIAL_SERVERS: DeliveryServer[] = [
     { id: '1', name: 'System SMTP', type: 'SMTP', host: 'smtp.mailflow.com', status: 'Active', hourlyQuota: 500, currentUsage: 120 },
     { id: '2', name: 'Amazon SES (East)', type: 'Amazon SES', status: 'Active', hourlyQuota: 10000, currentUsage: 4500 },
     { id: '3', name: 'Mailgun Backup', type: 'Mailgun', status: 'Inactive', hourlyQuota: 2000, currentUsage: 0 },
 ];
 
 export const Servers: React.FC = () => {
+  const [servers, setServers] = useState<DeliveryServer[]>(INITIAL_SERVERS);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [editingServer, setEditingServer] = useState<DeliveryServer | null>(null);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    type: 'SMTP' as DeliveryServer['type'],
+    host: '',
+    status: 'Active' as 'Active' | 'Inactive',
+    hourlyQuota: 1000
+  });
+
+  const handleAddServer = () => {
+    const newServer: DeliveryServer = {
+      id: Date.now().toString(),
+      name: formData.name,
+      type: formData.type,
+      host: formData.host,
+      status: formData.status,
+      hourlyQuota: formData.hourlyQuota,
+      currentUsage: 0
+    };
+    setServers([newServer, ...servers]);
+    resetForm();
+    setIsModalOpen(false);
+  };
+
+  const handleUpdateServer = () => {
+    if (!editingServer) return;
+    setServers(prev => prev.map(s => 
+      s.id === editingServer.id 
+        ? { ...s, name: formData.name, type: formData.type, host: formData.host, status: formData.status, hourlyQuota: formData.hourlyQuota } 
+        : s
+    ));
+    setIsSettingsOpen(false);
+    setEditingServer(null);
+  };
+
+  const handleDeleteServer = (id: string) => {
+    setServers(prev => prev.filter(s => s.id !== id));
+    setIsSettingsOpen(false);
+    setEditingServer(null);
+  };
+
+  const openSettings = (server: DeliveryServer) => {
+    setEditingServer(server);
+    setFormData({
+      name: server.name,
+      type: server.type,
+      host: server.host || '',
+      status: server.status,
+      hourlyQuota: server.hourlyQuota
+    });
+    setIsSettingsOpen(true);
+  };
+
+  const resetForm = () => {
+    setFormData({ name: '', type: 'SMTP', host: '', status: 'Active', hourlyQuota: 1000 });
+  };
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
@@ -16,7 +77,10 @@ export const Servers: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-800">Delivery Servers</h1>
           <p className="text-slate-500">Manage SMTP and API servers for email delivery rotation.</p>
         </div>
-        <button className="flex items-center justify-center space-x-2 bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20">
+        <button 
+          onClick={() => { resetForm(); setIsModalOpen(true); }}
+          className="flex items-center justify-center space-x-2 bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20"
+        >
           <Plus size={20} />
           <span>Add New Server</span>
         </button>
@@ -34,7 +98,7 @@ export const Servers: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {MOCK_SERVERS.map((server) => (
+            {servers.map((server) => (
               <tr key={server.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center space-x-3">
@@ -73,7 +137,10 @@ export const Servers: React.FC = () => {
                     </div>
                 </td>
                 <td className="px-6 py-4 text-right">
-                    <button className="text-slate-400 hover:text-indigo-600 p-2 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <button 
+                      onClick={() => openSettings(server)}
+                      className="text-slate-400 hover:text-indigo-600 p-2 rounded-lg hover:bg-indigo-50 transition-colors"
+                    >
                         <Settings size={18} />
                     </button>
                 </td>
@@ -102,6 +169,107 @@ export const Servers: React.FC = () => {
              </div>
         </div>
       </div>
+
+      {/* Add/Edit Server Modal */}
+      {(isModalOpen || isSettingsOpen) && (
+        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 animate-fade-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-800">
+                {isModalOpen ? 'Add Delivery Server' : 'Server Settings'}
+              </h2>
+              <button onClick={() => { setIsModalOpen(false); setIsSettingsOpen(false); }} className="text-slate-400 hover:text-slate-600">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Server Name</label>
+                  <input 
+                    type="text" 
+                    value={formData.name}
+                    onChange={e => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                    placeholder="e.g. Main SMTP Cluster"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Connection Type</label>
+                  <select 
+                    value={formData.type}
+                    onChange={e => setFormData({...formData, type: e.target.value as DeliveryServer['type']})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  >
+                    <option value="SMTP">SMTP Relay</option>
+                    <option value="Amazon SES">Amazon SES</option>
+                    <option value="Mailgun">Mailgun</option>
+                    <option value="SendGrid">SendGrid</option>
+                    <option value="PHP Mail">PHP Mail</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                  <select 
+                    value={formData.status}
+                    onChange={e => setFormData({...formData, status: e.target.value as 'Active' | 'Inactive'})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="col-span-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Hourly Quota</label>
+                  <input 
+                    type="number" 
+                    value={formData.hourlyQuota}
+                    onChange={e => setFormData({...formData, hourlyQuota: parseInt(e.target.value)})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Host / Endpoint URL</label>
+                  <input 
+                    type="text" 
+                    value={formData.host}
+                    onChange={e => setFormData({...formData, host: e.target.value})}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                    placeholder="e.g. smtp.provider.com"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-6 flex items-center justify-between border-t border-slate-100">
+                {isSettingsOpen && (
+                  <button 
+                    onClick={() => editingServer && handleDeleteServer(editingServer.id)}
+                    className="flex items-center text-red-600 hover:text-red-700 font-medium text-sm"
+                  >
+                    <Trash2 size={16} className="mr-1" /> Delete Server
+                  </button>
+                )}
+                <div className="flex space-x-3 ml-auto">
+                  <button 
+                    onClick={() => { setIsModalOpen(false); setIsSettingsOpen(false); }}
+                    className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={isModalOpen ? handleAddServer : handleUpdateServer}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center"
+                  >
+                    <Save size={18} className="mr-2" /> 
+                    {isModalOpen ? 'Create Server' : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

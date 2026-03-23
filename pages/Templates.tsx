@@ -31,7 +31,7 @@ const MOCK_TEMPLATES: EmailTemplate[] = [
         { id: '3', type: 'button', content: { label: 'Shop Now', url: '#', backgroundColor: '#ef4444', color: '#ffffff', align: 'center' } }
       ]
     },
-    { id: '3', name: 'Welcome Email', category: 'Transactional', updatedAt: '1 month ago', thumbnail: 'https://images.unsplash.com/photo-1512428559083-a40ce903395b?w=400&h=300&fit=crop' },
+    { id: '3', name: 'Welcome Email', category: 'Transactional', updatedAt: '1 month ago', thumbnail: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop' },
     { id: '4', name: 'Simple Text', category: 'Basic', updatedAt: '3 months ago', thumbnail: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop' },
 ];
 
@@ -39,6 +39,7 @@ export const Templates: React.FC = () => {
   const [view, setView] = useState<'list' | 'create' | 'edit'>('list');
   const [templates, setTemplates] = useState<EmailTemplate[]>(MOCK_TEMPLATES);
   const [previewTemplate, setPreviewTemplate] = useState<EmailTemplate | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   
   // Editor State
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
@@ -109,8 +110,13 @@ export const Templates: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-      if(window.confirm('Are you sure you want to delete this template?')) {
-          setTemplates(templates.filter(t => t.id !== id));
+      setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = () => {
+      if (deleteConfirmId) {
+          setTemplates(templates.filter(t => t.id !== deleteConfirmId));
+          setDeleteConfirmId(null);
       }
   };
 
@@ -293,6 +299,34 @@ export const Templates: React.FC = () => {
                       className="bg-white shadow-lg mx-auto w-full max-w-[600px] min-h-[500px] h-fit animate-slide-up"
                       dangerouslySetInnerHTML={{__html: previewTemplate.html || '<div class="p-12 text-center text-slate-400">Empty Template</div>'}}
                    ></div>
+                </div>
+             </div>
+          </div>
+      )}
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in">
+             <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 animate-slide-up">
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
+                        <Trash2 size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800 mb-2">Delete Template?</h3>
+                    <p className="text-slate-500 mb-6 text-sm">Are you sure you want to delete this template? This action cannot be undone.</p>
+                    <div className="flex w-full space-x-3">
+                        <button 
+                            onClick={() => setDeleteConfirmId(null)}
+                            className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            onClick={confirmDelete}
+                            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors shadow-lg shadow-red-600/20"
+                        >
+                            Delete
+                        </button>
+                    </div>
                 </div>
              </div>
           </div>

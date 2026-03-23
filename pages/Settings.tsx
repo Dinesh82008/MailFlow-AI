@@ -1,8 +1,33 @@
 import React, { useState } from 'react';
-import { Save, Terminal, DollarSign, Globe, Lock, Bell } from 'lucide-react';
+import { Save, Terminal, DollarSign, Globe, Lock, Bell, CheckCircle, AlertCircle } from 'lucide-react';
 
 export const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'general' | 'monetization' | 'cron' | 'api'>('general');
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const [generalSettings, setGeneralSettings] = useState({
+    appName: 'MailFlow AI',
+    supportEmail: 'support@mailflow.ai',
+    timezone: 'UTC',
+    dateFormat: 'YYYY-MM-DD'
+  });
+
+  const [monetizationSettings, setMonetizationSettings] = useState({
+    enablePayments: true,
+    stripeConnected: true,
+    paypalConnected: false
+  });
+
+  const handleSave = () => {
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    }, 1000);
+  };
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -11,10 +36,26 @@ export const Settings: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
           <p className="text-slate-500">Configure global application settings and preferences.</p>
         </div>
-        <button className="flex items-center space-x-2 bg-slate-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-slate-800 transition-colors">
-          <Save size={18} />
-          <span>Save Changes</span>
-        </button>
+        <div className="flex items-center space-x-4">
+          {showSuccess && (
+            <div className="flex items-center text-green-600 text-sm font-medium animate-fade-in">
+              <CheckCircle size={16} className="mr-2" />
+              Settings saved successfully!
+            </div>
+          )}
+          <button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className={`flex items-center space-x-2 bg-slate-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-slate-800 transition-colors ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            {isSaving ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              <Save size={18} />
+            )}
+            <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
@@ -37,15 +78,15 @@ export const Settings: React.FC = () => {
                           <span>Monetization</span>
                       </button>
                       <button 
-                         onClick={() => setActiveTab('cron')}
-                         className={`text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-sm font-medium ${activeTab === 'cron' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
+                        onClick={() => setActiveTab('cron')}
+                        className={`text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-sm font-medium ${activeTab === 'cron' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
                       >
                           <Terminal size={18} />
                           <span>Cron Jobs</span>
                       </button>
                       <button 
-                         onClick={() => setActiveTab('api')}
-                         className={`text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-sm font-medium ${activeTab === 'api' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
+                        onClick={() => setActiveTab('api')}
+                        className={`text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-sm font-medium ${activeTab === 'api' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
                       >
                           <Lock size={18} />
                           <span>API & Security</span>
@@ -63,26 +104,44 @@ export const Settings: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
                               <label className="block text-sm font-medium text-slate-700 mb-1">Application Name</label>
-                              <input type="text" defaultValue="MailFlow AI" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                              <input 
+                                type="text" 
+                                value={generalSettings.appName} 
+                                onChange={e => setGeneralSettings({...generalSettings, appName: e.target.value})}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                              />
                           </div>
                           <div>
                               <label className="block text-sm font-medium text-slate-700 mb-1">Support Email</label>
-                              <input type="email" defaultValue="support@mailflow.ai" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                              <input 
+                                type="email" 
+                                value={generalSettings.supportEmail} 
+                                onChange={e => setGeneralSettings({...generalSettings, supportEmail: e.target.value})}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                              />
                           </div>
                           <div>
                               <label className="block text-sm font-medium text-slate-700 mb-1">Timezone</label>
-                              <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                  <option>UTC</option>
-                                  <option>America/New_York</option>
-                                  <option>Europe/London</option>
+                              <select 
+                                value={generalSettings.timezone}
+                                onChange={e => setGeneralSettings({...generalSettings, timezone: e.target.value})}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                              >
+                                  <option value="UTC">UTC</option>
+                                  <option value="America/New_York">America/New_York</option>
+                                  <option value="Europe/London">Europe/London</option>
                               </select>
                           </div>
                            <div>
                               <label className="block text-sm font-medium text-slate-700 mb-1">Date Format</label>
-                              <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                  <option>YYYY-MM-DD</option>
-                                  <option>DD-MM-YYYY</option>
-                                  <option>MM/DD/YYYY</option>
+                              <select 
+                                value={generalSettings.dateFormat}
+                                onChange={e => setGeneralSettings({...generalSettings, dateFormat: e.target.value})}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                              >
+                                  <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                  <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                                  <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                               </select>
                           </div>
                       </div>
@@ -95,8 +154,11 @@ export const Settings: React.FC = () => {
                            <h2 className="text-lg font-bold text-slate-800">Monetization</h2>
                            <div className="flex items-center space-x-2">
                                <span className="text-sm text-slate-600">Enable Payments</span>
-                               <div className="w-10 h-5 bg-indigo-600 rounded-full relative cursor-pointer">
-                                   <div className="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow-sm"></div>
+                               <div 
+                                onClick={() => setMonetizationSettings({...monetizationSettings, enablePayments: !monetizationSettings.enablePayments})}
+                                className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${monetizationSettings.enablePayments ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                               >
+                                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${monetizationSettings.enablePayments ? 'right-0.5' : 'left-0.5'}`}></div>
                                </div>
                            </div>
                        </div>
@@ -107,11 +169,19 @@ export const Settings: React.FC = () => {
                                <div className="mt-3 space-y-2">
                                    <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded">
                                        <span className="font-medium text-slate-700">Stripe</span>
-                                       <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded font-medium">Connected</span>
+                                       {monetizationSettings.stripeConnected ? (
+                                         <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded font-medium">Connected</span>
+                                       ) : (
+                                         <button onClick={() => setMonetizationSettings({...monetizationSettings, stripeConnected: true})} className="text-xs text-indigo-600 font-medium hover:underline">Connect</button>
+                                       )}
                                    </div>
                                    <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded">
                                        <span className="font-medium text-slate-700">PayPal</span>
-                                       <button className="text-xs text-indigo-600 font-medium hover:underline">Connect</button>
+                                       {monetizationSettings.paypalConnected ? (
+                                         <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded font-medium">Connected</span>
+                                       ) : (
+                                         <button onClick={() => setMonetizationSettings({...monetizationSettings, paypalConnected: true})} className="text-xs text-indigo-600 font-medium hover:underline">Connect</button>
+                                       )}
                                    </div>
                                </div>
                            </div>
@@ -219,5 +289,3 @@ export const Settings: React.FC = () => {
     </div>
   );
 };
-
-import { CheckCircle } from 'lucide-react'; // Added missing import for cron tab
